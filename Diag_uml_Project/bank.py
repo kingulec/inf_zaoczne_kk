@@ -1,3 +1,6 @@
+import random
+
+
 class Klient:
     def __init__(self, imie, nazwisko, pesel, konto=None):
         self.imie = imie
@@ -10,6 +13,7 @@ class Klient:
               f"Nazwisko= {self.nazwisko}\n"
               f"Pesel= {self.pesel}")
 
+
 class Bank:
     def __init__(self, nazwa, adres):
         self.nazwa_banku = nazwa
@@ -18,14 +22,14 @@ class Bank:
     @staticmethod
     def Autoryzacja(numer_transakcji, status=True):
         if status:
-            print("Autoryzacja transakcji " + numer_transakcji)
+            print("Autoryzacja transakcji " + str(numer_transakcji))
             return True
         print("Transakcja się nie powiodła")
         return False
 
 
 class Konto:
-    def __init__(self, srodki, rachunki):
+    def __init__(self, srodki, rachunki=None):
         self.srodki = srodki
         self.rachunki = rachunki
 
@@ -41,14 +45,22 @@ class Rachunek:
         self.type = "osobisty"
 
 
-class Transakcja(Konto):
+class Transakcja:
+    def __init__(self):
+        self.id = random.randint(0, 10000)
+
     def wyplata(self, kwota):
         pass
 
+    def wnioskujOkredyt(self):
+        kwota = input("Podaj kwotę kredytu:")
+        lata = input("Podaj ilość lat do spłaty kredytu:")
+        print(f"Wniosek kredytowy\nWysokość kwoty: {kwota}\nlata: {lata}")
+        return kwota, lata
 
-class Pracownik(Bank):
-    def __init__(self, imie_pracownika, nazwisko_prcownika, nazwa, adres):
-        super().__init__(nazwa, adres)
+
+class Pracownik:
+    def __init__(self, imie_pracownika, nazwisko_prcownika):
         self.imie_pracownika = imie_pracownika
         self.nazwisko_pracownika = nazwisko_prcownika
 
@@ -59,7 +71,7 @@ class Pracownik(Bank):
         if klient.pesel != data["pesel"]:
             print("Niepopawny pesel.")
             return False
-        if not self.sprawdz_w_bazie(data["dlug"]) or \
+        if not self.sprawdz_w_bazie(data["dlugi"]) or \
                 not self.sprawdz_w_bazie(data["dochod"]):
             return False
         return True
@@ -71,7 +83,7 @@ class Pracownik(Bank):
 
         if float(kwota_kredytu) > float(lata) * float(data["dochod"]):
             return False
-        if data["dlug"] == "TAK":
+        if data["dlugi"] == "TAK":
             return False
         return True
 
@@ -106,5 +118,23 @@ class Pracownik(Bank):
         return data
 
 
+def main():
+    mbank = Bank("Mbank", "")
+    konto01 = Konto(5000.00)
+    klient1 = Klient("Agata", "Niewiadomska", "00022211144", konto01)
+    klient1.display_data()
+    pracownik01 = Pracownik("Aneta", "Bolek")
+    opcja = input("Wybierz transakcję:\n"
+                   "1.Wniosek o kredyt\n")
+    t1 = Transakcja()
+    if opcja == "1":
+        kwota, lata= t1.wnioskujOkredyt()
+        stat = pracownik01.analizaZdolnosciKredytowej(klient1, kwota, lata)
+        mbank.Autoryzacja(t1.id, stat)
 
+
+
+
+if __name__ == "__main__":
+    main()
 
