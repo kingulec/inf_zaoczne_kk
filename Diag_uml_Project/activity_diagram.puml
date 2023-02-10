@@ -1,0 +1,44 @@
+@startuml
+
+(*) --> "Logowanie"
+if "Poprawny login i hasło?" as if1 then
+    --> [Nie] "Odmowa dostępu do konta"
+    --> if1
+else
+    --> [Tak] "Poprawne zalogowanie się do konta"
+    --> "Transakcja"
+
+endif
+if "Transakcja" then
+    --> [Wypłata] "Wypłata gotówki"
+    --> "Wprowadzenie kwoty"
+else
+    --> [Wpłata] "Wpłata gotówki"
+    --> "Wprowadzenie kwoty"
+else
+    --> [Przelew] "Przelew środków"
+    --> "Wprowadzenie kwoty"
+else
+    --> [Stan konta] "Sprawdź stan konta"
+    -->  "Sprawdzenie dostępnych środków"
+else
+    --> [Kredyt] "Wniosek kredytowy"
+    --> "Analiza zdolnośći kredytowej"
+endif
+if "Przyznanie kredytu?" as if3 then
+    --> [Tak] "Kredyt"
+    --> (*)
+else
+    --> [Nie] "Odrzucenie wniosku"
+    --> "Transakcja"
+endif
+"Wprowadzenie kwoty" --> "Sprawdzenie dostępnych środków"
+if "Czy saldo na koncie jest wystarczające?" as if4 then
+    --> [Nie] "Odmowa"
+    --> "Transakcja"
+else
+    --> [Tak] "Autoryzacja"
+    --> (*)
+
+endif
+@enduml

@@ -1,0 +1,32 @@
+@startuml
+
+'człowiek używający aplikacji
+actor Klient
+
+'ignorujemy UI
+Klient -> Pracownik : wniosekKredytowy(wniosek0001)
+activate Pracownik
+Pracownik -> Konto : AnalizaZdolnosciKredytowej(wniosek0001)
+activate Konto
+Konto -> Bank : Autoryzacja(wniosek0001)
+activate Bank
+return Wpłata środków
+return Aktualizacja stanu konta
+return Wyświetl stan konta
+
+Klient -> Konto : wypłataśrodków(1000.00)
+activate Konto
+Konto -> Bank: SpradzBilansKonta()
+Bank --> Konto: OdejmijKwotęZRachunku()
+return Wypłata środków 1000.00
+
+
+Klient -> Konto : wpłataśrodków(200.00)
+activate Konto
+Konto -> Bank: AutoryzacjaWpłaty(200.00)
+activate Bank
+Bank --> Konto: DodajKwotęDoRachunku()
+Konto --> Klient : WyświetlAktualnyStanKonta
+return
+deactivate
+@enduml

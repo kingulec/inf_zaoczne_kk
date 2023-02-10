@@ -1,0 +1,56 @@
+@startuml
+
+'skinparam linetype ortho
+
+class Klient{
+
+    imie: String
+    nazwisko: String
+    pesel: Integer
+    konto: Konto
+}
+class Pracownik{
+    imie: String
+    nazwisko: String
+    weryfikacjaDanych(..):bool
+    utworzenieRachunkuBankowego(bool: oszczednosciowy):Rachunek
+    analizaZdolnosciKredytowej(): bool
+
+}
+class Transakcja{
+    int: numer_transakcji
+    wyplata(float: kwota)
+    wplata(float: kwota)
+    wnioskujOkredyt(float: kwota)
+    sprawdzStanKonta()
+    przelew(float: kwota, na_nr_rachnku)
+}
+class Konto{
+    float: dostepne_srodki
+    list[]: rachunki_bankowe
+    Rachunek: dodajRachunek()
+
+}
+
+class Rachunek{
+    int: numer_rachunku
+    float: dostepne_srodki
+    dodajRachunekOszczędnościowy()
+    dodajRachunekOsobisty()
+}
+class Bank {
+    String: nazwa_banku
+    String: adres_glowny
+    autorycacjaOperacji(Transakcja: transakcja):bool
+}
+Bank --|> Pracownik
+
+Transakcja -- Konto
+Klient -- Transakcja
+Konto o-- Rachunek
+Klient -- Konto
+Pracownik -- Konto
+
+
+
+@enduml

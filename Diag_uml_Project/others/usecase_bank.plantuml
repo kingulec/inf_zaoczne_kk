@@ -1,0 +1,45 @@
+@startuml
+
+actor Bank
+actor Pracownik
+actor Klient
+
+usecase (Operacja)
+usecase (Utwórz rachunek)
+usecase (Stan konta)
+usecase (Wpłata)
+usecase (Wypłata)
+usecase (Przelew)
+usecase (Kredyt)
+usecase (Autoryzacja)
+usecase (Weryfikacja danych)
+
+Pracownik<|-Bank
+
+Klient -- (Operacja)
+Klient -- (Utwórz rachunek)
+
+(Utwórz rachunek) -- (Oszczędnościowy)
+(Utwórz rachunek) -- (Nowy rachunek)
+(Oszczędnościowy) -- (Weryfikacja danych)
+(Nowy rachunek) -- (Weryfikacja danych)
+(Weryfikacja danych) -- Pracownik
+(Weryfikacja danych) --> (Autoryzacja)
+
+
+(Operacja) -- (Kredyt): <<involve>>
+(Kredyt) --> (Analiza zdolności kredytowej)
+Pracownik -- (Analiza zdolności kredytowej)
+(Analiza zdolności kredytowej) --> (Autoryzacja)
+(Operacja) -- (Stan konta)
+(Stan konta) --> (Autoryzacja)
+(Operacja) -- (Wpłata)
+(Wpłata) --> (Autoryzacja)
+(Operacja) -- (Wypłata)
+(Wypłata) --> (Autoryzacja)
+(Operacja) -- (Przelew)
+(Przelew) --> (Autoryzacja)
+
+
+Bank -- (Autoryzacja)
+@enduml
