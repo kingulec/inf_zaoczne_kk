@@ -27,30 +27,52 @@ class Bank:
         print("Transakcja się nie powiodła")
         return False
 
-
 class Konto:
     def __init__(self, srodki, rachunki=None):
         self.srodki = srodki
         self.rachunki = rachunki
 
 
-class Rachunek:
-    def __init__(self):
+class Rachunek(Konto):
+    def __init__(self, srodki):
+        super().__init__(srodki)
         self.type = ""
+        self.oprocentowanie = None
 
     def dodajRachunekOszczednosciowy(self, oprocentowanie):
         self.type = "oszczędnościowy"
+        self.oprocentowanie = oprocentowanie
 
     def dodajRachunekOsobisty(self):
         self.type = "osobisty"
 
 
 class Transakcja:
-    def __init__(self):
+    def __init__(self, konto):
         self.id = random.randint(0, 10000)
+        self.konto = konto
 
-    def wyplata(self, kwota):
-        pass
+    def wyplata(self):
+        kwota = input("Podaj kwotę wypłatyz konta:")
+        if self.konto.srodki < float(kwota):
+            print("Transakcja odrzucona.")
+            return None
+        return kwota
+
+    def wplata(self):
+        kwota = input("Podaj kwotę wpłaty:")
+        return kwota
+
+    def przelew(self):
+        kwota = input("Podaj kwotę przelwu:")
+        nr_konta = input("Podaj numer konta na który ma zostać wykonany przelew:")
+        if self.konto.srodki < float(kwota):
+            print("Transakcja odrzucona.")
+            kwota = None
+        return kwota, nr_konta
+
+    def sprawdzStanKonta(self):
+        return self.konto.srodki
 
     def wnioskujOkredyt(self):
         kwota = input("Podaj kwotę kredytu:")
@@ -87,14 +109,14 @@ class Pracownik:
             return False
         return True
 
-    def utworzRachunekBankowy(self, klient, oszczednosciowy = True, oprocentowanie = None):
+    def utworzRachunekBankowy(self, klient, srodki, oszczednosciowy = True, oprocentowanie = None):
         data = self.podaj_dane_podane_przez_klienta()
         if not self.weryfikacjaDanych(klient, data):
             return False
         if oszczednosciowy:
-            rachunek = Rachunek().dodajRachunekOszczednosciowy(oprocentowanie)
+            rachunek = Rachunek(srodki).dodajRachunekOszczednosciowy(oprocentowanie)
         else:
-            rachunek = Rachunek().dodajRachunekOsobisty()
+            rachunek = Rachunek(srodki).dodajRachunekOsobisty()
         klient.konto.rachunki.append(rachunek)
 
     @staticmethod
@@ -125,14 +147,37 @@ def main():
     klient1.display_data()
     pracownik01 = Pracownik("Aneta", "Bolek")
     opcja = input("Wybierz transakcję:\n"
-                   "1.Wniosek o kredyt\n")
-    t1 = Transakcja()
+                   "1.Wniosek o kredyt\n"
+                   "2.Przelew\n"
+                  "3. Wpłata\n"
+                  "4. Wypłata\n"
+                  "5. Sprawdź stan konta\n")
+    t1 = Transakcja(konto01)
     if opcja == "1":
         kwota, lata= t1.wnioskujOkredyt()
         stat = pracownik01.analizaZdolnosciKredytowej(klient1, kwota, lata)
         mbank.Autoryzacja(t1.id, stat)
-
-
+    elif opcja == "2":
+        kwota, nr_konta = t1.przelew()
+        stat = True
+        if not kwota:
+            stat = False
+        mbank.Autoryzacja(t1.id, stat)
+    elif opcja == "3":
+        kwota = t1.wplata()
+        stat = True
+        mbank.Autoryzacja(t1.id, stat)
+        print(f"Wpłata {kwota} na konto")
+    elif opcja == "4":
+        kwota = t1.wyplata()
+        stat = True
+        if not kwota:
+            stat = False
+        mbank.Autoryzacja(t1.id, stat)
+    elif opcja == "5":
+        srodki = t1.sprawdzStanKonta()
+        mbank.Autoryzacja(t1.id, True)
+        print(f"Srodki na koncie: {srodki}")
 
 
 if __name__ == "__main__":
